@@ -12,13 +12,13 @@ Install stable/liberty devstack with GBP.
   
     6. wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/nfp-patch.sh
 
-    7. edit the local.conf
-
     7. chmod +x nfp-patch.sh
 
     8. ./nfp-patch.sh 
 
-    6. ./stack.sh
+    9. edit the local.conf
+
+    10. ./stack.sh
 
 
 
