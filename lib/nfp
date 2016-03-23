@@ -8,9 +8,7 @@ function assign_user_role_credential {
     serviceRoleID=`keystone role-list | grep "service" | awk '{print $2}'`
     adminRoleID=`keystone role-list | grep "admin" | awk '{print $2}'`
     keystone user-role-add --user nova --tenant $serviceTenantID --role $serviceRoleID
-    sleep 1
     keystone user-role-add --user neutron --tenant $serviceTenantID --role $adminRoleID
-    sleep 1
 }
 
 function create_ext_net {
@@ -28,8 +26,6 @@ function create_ext_net {
     neutron net-create --router:external=true --shared $EXT_NET_NAME
     neutron subnet-create --ip_version 4 --gateway $EXT_NET_GATEWAY --name $EXT_NET_SUBNET_NAME --allocation-pool start=$EXT_NET_ALLOCATION_POOL_START,end=$EXT_NET_ALLOCATION_POOL_END $EXT_NET_NAME $EXT_NET_CIDR/$EXT_NET_MASK
     subnet_id=`neutron net-list | grep "$EXT_NET_NAME" | awk '{print $6}'`
-
-
 }
 
 function create_nfp_gbp_resources {
@@ -43,9 +39,6 @@ function create_nfp_gbp_resources {
    gbp service-profile-create --servicetype FIREWALL --insertion-mode l3 --shared True --service-flavor vyos --vendor NFP fw_profile
 
    gbp group-create svc_management_ptg --service_management True
-
-
-
 }
 
 function upload_images_and_launch_configuratorVM {
@@ -103,9 +96,6 @@ function upload_images_and_launch_configuratorVM {
     IpAddr=${IpAddr_purge_last//\"/}
     echo "Collecting IpAddr : for $PortId"
     echo $IpAddr
-    sleep 2
-
-
 }
 
 function copy_nfp_files_and_start_process {
@@ -113,7 +103,6 @@ function copy_nfp_files_and_start_process {
     TOP_DIR=$1
     cd /opt/stack/gbp/gbpservice/nfp
     sudo cp -r  bin/nfp /usr/bin/
-    sleep 1
     sudo chmod +x /usr/bin/nfp
     sudo cp -r  bin/nfp_config_agent.ini /etc/
     sudo cp -r  bin/nfp_orch_agent.ini /etc/
@@ -121,11 +110,8 @@ function copy_nfp_files_and_start_process {
     sudo rm -rf /etc/agent_proxy
     sudo cp -r agent_proxy /etc/
 
-    sleep 1
-
     echo "Configuring proxy.ini .... with rest_server_address as $IpAddr"
     sudo sed -i "s/rest_server_address=*.*/rest_server_address=$IpAddr/g" /etc/agent_proxy/proxy/proxy.ini
-    sleep 1
     ipnetns_router=`sudo ip netns |grep $RouterId`
 
     source $TOP_DIR/functions-common
@@ -151,7 +137,6 @@ function copy_nfp_files_and_start_process {
     source $TOP_DIR/openrc neutron service
 
     gbp-db-manage --config-file /etc/neutron/neutron.conf upgrade head
-    sleep 2
     echo "Configuration success ... "
 
 }
@@ -172,5 +157,4 @@ function nfp_setup {
     create_nfp_gbp_resources $1
     upload_images_and_launch_configuratorVM $1 $2 $3
     copy_nfp_files_and_start_process $1
-
 }
