@@ -16,13 +16,13 @@ function assign_user_role_credential {
 function create_ext_net {
     TOP_DIR=$1
     source $TOP_DIR/stackrc
-    EXT_NET_NAME=ext-net
-    EXT_NET_SUBNET_NAME=ext-net-subnet
-    EXT_NET_GATEWAY=192.168.102.254
-    EXT_NET_ALLOCATION_POOL_START=192.168.102.81
-    EXT_NET_ALLOCATION_POOL_END=192.168.102.90
-    EXT_NET_CIDR=192.168.102.0
-    EXT_NET_MASK=24
+    EXT_NET_NAME=$EXT_NET_NAME
+    EXT_NET_SUBNET_NAME=$EXT_NET_SUBNET_NAME
+    EXT_NET_GATEWAY=$EXT_NET_GATEWAY
+    EXT_NET_ALLOCATION_POOL_START=$EXT_NET_ALLOCATION_POOL_START
+    EXT_NET_ALLOCATION_POOL_END=$EXT_NET_ALLOCATION_POOL_END
+    EXT_NET_CIDR=$EXT_NET_CIDR
+    EXT_NET_MASK=$EXT_NET_MASK
     
     source $TOP_DIR/openrc neutron service
     neutron net-create --router:external=true --shared $EXT_NET_NAME

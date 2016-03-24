@@ -1,4 +1,4 @@
-Install stable/liberty devstack with GBP.
+Install mitaka devstack with GBP.
 
     1. git clone https://git.openstack.org/openstack-dev/devstack -b master
 
@@ -17,6 +17,22 @@ Install stable/liberty devstack with GBP.
     8. ./nfp-patch.sh 
 
     9. edit the local.conf
+      
+       copy the service images from 192.168.100.135 to lacal machine
+       image_path=/home/stack/service_images
+
+       edit the following things
+
+       ConfiguratorQcow2Image=<configurator image path>
+       VyosQcow2Image=<vyos image path>
+       EXT_NET_NAME=ext-net
+       EXT_NET_SUBNET_NAME=ext-net-subnet
+       EXT_NET_GATEWAY=192.168.102.254
+       EXT_NET_ALLOCATION_POOL_START=192.168.102.81
+       EXT_NET_ALLOCATION_POOL_END=192.168.102.90
+       EXT_NET_CIDR=192.168.102.0
+       EXT_NET_MASK=24
+       HOST_IP=
 
     10. ./stack.sh
 
