@@ -10,7 +10,7 @@ Install base mode stable/mitaka devstack with GBP.
 
     5. ./gbp-patch.sh
   
-    6. wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/nfp-patch.sh
+    6. wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/nfp-patch.sh
 
     7. chmod +x nfp-patch.sh
 
