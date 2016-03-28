@@ -27,7 +27,6 @@ function create_ext_net {
     neutron subnet-create --ip_version 4 --gateway $EXT_NET_GATEWAY --name $EXT_NET_SUBNET_NAME --allocation-pool start=$EXT_NET_ALLOCATION_POOL_START,end=$EXT_NET_ALLOCATION_POOL_END $EXT_NET_NAME $EXT_NET_CIDR/$EXT_NET_MASK
     subnet_id=`neutron net-list | grep "$EXT_NET_NAME" | awk '{print $6}'`
 
-
 }
 
 function create_nfp_gbp_resources {
@@ -35,15 +34,9 @@ function create_nfp_gbp_resources {
    TOP_DIR=$1
    source $TOP_DIR/openrc neutron service
    gbp network-service-policy-create --network-service-params type=ip_pool,name=vip_ip,value=nat_pool svc_mgmt_fip_policy
-
-
    gbp service-profile-create --servicetype LOADBALANCER --insertion-mode l3 --shared True --service-flavor haproxy --vendor NFP lb_profile
    gbp service-profile-create --servicetype FIREWALL --insertion-mode l3 --shared True --service-flavor vyos --vendor NFP fw_profile
-
    gbp group-create svc_management_ptg --service_management True
-
-
-
 }
 
 function get_router_namespace {
@@ -57,9 +50,6 @@ function get_router_namespace {
     l2p_id=`gbp ptg-show svc_management_ptg | grep l2_policy_id | awk '{print $4}'`
     l3p_id=`gbp l2p-show $l2p_id | grep l3_policy_id | awk '{print $4}'`
     RouterId=`gbp l3p-show $l3p_id | grep routers | awk '{print $4}'`
-
-
-
 }
 
 function copy_nfp_files_and_start_process {
@@ -68,36 +58,40 @@ function copy_nfp_files_and_start_process {
     cd /opt/stack/gbp/gbpservice/nfp
     sudo cp -r  bin/nfp /usr/bin/
     sudo chmod +x /usr/bin/nfp
+    sudo rm -rf /etc/nfp_*
     sudo cp -r  bin/nfp_orch_agent.ini /etc/
-    sudo cp -r  bin/nfp_config_agent_proxy.ini /etc/
-    sudo rm -rf /etc/proxy_agent
-    sudo cp -r proxy_agent /etc/
-    sudo cp -r bin/proxy.ini /etc/proxy_agent/proxy/
+    sudo cp -r  bin/nfp_proxy_agent.ini /etc/
+    sudo cp -r  bin/nfp_config_orch.ini /etc/
+    sudo cp -r  bin/proxy.ini /etc/nfp_proxy.ini
+    sudo cp -r  bin/nfp_proxy /usr/bin/
 
     IpAddr=127.0.0.1
     echo "Configuring proxy.ini .... with rest_server_address as $IpAddr"
-    sudo sed -i "s/rest_server_address=*.*/rest_server_address=$IpAddr/g" /etc/proxy_agent/proxy/proxy.ini
-    sleep 1
+    sudo sed -i "s/rest_server_address=*.*/rest_server_address=$IpAddr/g" /etc/nfp_proxy.ini
     ipnetns_router=`sudo ip netns |grep $RouterId`
 
     source $TOP_DIR/functions-common
 
     echo "Starting orchestrator  >>>> under screen named : orchestrator"
-    run_process orchestrator "sudo /usr/bin/nfp  --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini --config-file /etc/nfp_orch_agent.ini"
+    run_process orchestrator "sudo /usr/bin/nfp  --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini --config-file /etc/nfp_orch_agent.ini --log-file /opt/stack/logs/nfp_orchestrator.log"
     sleep 1
    
-    echo "Starting config_agent_proxy  >>>> under screen named : config_agent_proxy"
-    run_process config_agent_proxy "sudo /usr/bin/nfp  --config-file /etc/nfp_config_agent_proxy.ini"
+    echo "Starting proxy_agent  >>>> under screen named : proxy_agent"
+    run_process proxy_agent "sudo /usr/bin/nfp --config-file /etc/nfp_proxy_agent.ini --log-file /opt/stack/logs/nfp_proxy_agent.log"
     sleep 1
 
     echo "Starting proxy server under Router : $RouterId namespace $ipnetns_router >>>> under screen named : proxy"
-    run_process proxy "sudo ip netns exec $ipnetns_router /usr/bin/python /etc/proxy_agent/proxy/proxy.py --config-file=/etc/proxy_agent/proxy/proxy.ini"
+    run_process proxy "sudo ip netns exec $ipnetns_router /usr/bin/nfp_proxy --config-file=/etc/nfp_proxy.ini"
 
+
+    echo "Starting config_orch  >>>> under screen named : config_orch"
+    run_process config_orch "sudo /usr/bin/nfp  --config-file /etc/nfp_config_orch.ini --config-file /etc/neutron/neutron.conf --log-file /opt/stack/logs/nfp_config_orch.log"
+    sleep 1
 
     cd base_configurator/api
     sudo python setup.py develop
     echo "Starting base_configurator  >>>> under screen named : base_configurator"
-    run_process base_configurator "sudo ip netns exec $ipnetns_router pecan serve config.py" 
+    run_process base_configurator "cd /opt/stack/gbp/gbpservice/nfp/base_configurator/api;sudo ip netns exec $ipnetns_router pecan serve config.py" 
     sleep 1
 
     echo "Running gbp-db-manage"
