@@ -46,61 +46,18 @@ function create_nfp_gbp_resources {
 
 }
 
-function upload_images_and_launch_configuratorVM {
+function get_router_namespace {
     
     TOP_DIR=$1
     source $TOP_DIR/openrc neutron service
-    ConfiguratorQcow2ImageName=$2
-    VyosQcow2Image=$3
-    ConfiguratorImageName=configurator
-    VyosImageName=vyos
-    if [ ! -z "$1" -a "$1" != " " ]; then
-        ImageName=$1
-        echo "Uploading Image : $ConfiguratorImageName $VyosImageName"
-        glance image-create --name $ConfiguratorImageName --disk-format qcow2  --container-format bare  --visibility public --file $ConfiguratorQcow2ImageName
-        glance image-create --name $VyosImageName --disk-format qcow2  --container-format bare  --visibility public --file $VyosQcow2Image
-    else
-        echo "ImageName not provided ..."
-        exit
-    fi
-
-    InstanceName="configuratorVM_instance"
 
     GROUP="svc_management_ptg"
     echo "GroupName: $GROUP"
-    PortId=$(gbp policy-target-create --policy-target-group $GROUP $InstanceName | grep port_id  | awk '{print $4}')
-
-    sleep 2
-    echo "Collecting ImageId : for $ConfiguratorImageName"
-    ImageId=`glance image-list|grep $ConfiguratorImageName |awk '{print $2}'`
-    if [ ! -z "$ImageId" -a "$ImageId" != " " ]; then
-        echo $ImageId
-    else
-        echo "No image found with name $ConfiguratorImageName ..."
-        exit
-    fi
-
-    nova boot --flavor m1.medium --image $ImageId --nic port-id=$PortId $InstanceName
-    sleep 10
 
     l2p_id=`gbp ptg-show svc_management_ptg | grep l2_policy_id | awk '{print $4}'`
     l3p_id=`gbp l2p-show $l2p_id | grep l3_policy_id | awk '{print $4}'`
     RouterId=`gbp l3p-show $l3p_id | grep routers | awk '{print $4}'`
 
-    echo "Collecting RouterId : for $RouterName"
-    if [ ! -z "$RouterId" -a "$RouterId" != " " ]; then
-        echo $RouterId
-    else
-        echo "Router creation failed with $RouterName ..."
-        exit
-    fi
-
-    echo "Get IpAddr with port: $PortId"
-    IpAddr_extractor=`neutron port-list|grep $PortId|awk '{print $11}'`
-    IpAddr_purge_last=${IpAddr_extractor::-1}
-    IpAddr=${IpAddr_purge_last//\"/}
-    echo "Collecting IpAddr : for $PortId"
-    echo $IpAddr
 
 
 }
@@ -111,14 +68,13 @@ function copy_nfp_files_and_start_process {
     cd /opt/stack/gbp/gbpservice/nfp
     sudo cp -r  bin/nfp /usr/bin/
     sudo chmod +x /usr/bin/nfp
-    sudo cp -r  bin/nfp_config_agent.ini /etc/
     sudo cp -r  bin/nfp_orch_agent.ini /etc/
     sudo cp -r  bin/nfp_config_agent_proxy.ini /etc/
     sudo rm -rf /etc/proxy_agent
     sudo cp -r proxy_agent /etc/
     sudo cp -r bin/proxy.ini /etc/proxy_agent/proxy/
 
-
+    IpAddr=127.0.0.1
     echo "Configuring proxy.ini .... with rest_server_address as $IpAddr"
     sudo sed -i "s/rest_server_address=*.*/rest_server_address=$IpAddr/g" /etc/proxy_agent/proxy/proxy.ini
     sleep 1
@@ -137,9 +93,11 @@ function copy_nfp_files_and_start_process {
     echo "Starting proxy server under Router : $RouterId namespace $ipnetns_router >>>> under screen named : proxy"
     run_process proxy "sudo ip netns exec $ipnetns_router /usr/bin/python /etc/proxy_agent/proxy/proxy.py --config-file=/etc/proxy_agent/proxy/proxy.ini"
 
-    sleep 1
-    echo "Starting config_agent  >>>> under screen named : config_agent"
-    run_process config_agent  "sudo /usr/bin/nfp  --config-file /etc/nfp_config_agent.ini --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini"
+
+    cd base_configurator/api
+    sudo python setup.py develop
+    echo "Starting base_configurator  >>>> under screen named : base_configurator"
+    run_process base_configurator "sudo ip netns exec $ipnetns_router pecan serve config.py" 
     sleep 1
 
     echo "Running gbp-db-manage"
@@ -166,7 +124,7 @@ function configure_nfp_basic.sh {
 function nfp_setup {
     configure_nfp_basic.sh $1 
     create_nfp_gbp_resources $1
-    upload_images_and_launch_configuratorVM $1 $2 $3
+    get_router_namespace $1 
     copy_nfp_files_and_start_process $1
 
 }

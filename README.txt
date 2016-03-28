@@ -1,4 +1,4 @@
-Install stable/mitaka devstack with GBP.
+Install base mode stable/mitaka devstack with GBP.
 
     1. git clone https://git.openstack.org/openstack-dev/devstack -b stable/mitaka
 
@@ -18,13 +18,6 @@ Install stable/mitaka devstack with GBP.
 
     9. edit the local.conf
       
-       copy the service images from 192.168.100.135 to lacal machine
-       image_path=/home/stack/service_images
-
-       edit the following things
-
-       ConfiguratorQcow2Image=<configurator image path>
-       VyosQcow2Image=<vyos image path>
        EXT_NET_NAME=ext-net
        EXT_NET_SUBNET_NAME=ext-net-subnet
        EXT_NET_GATEWAY=192.168.102.254
