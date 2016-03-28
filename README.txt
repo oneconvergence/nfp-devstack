@@ -1,6 +1,6 @@
-Install mitaka devstack with GBP.
+Install stable/mitaka devstack with GBP.
 
-    1. git clone https://git.openstack.org/openstack-dev/devstack -b master
+    1. git clone https://git.openstack.org/openstack-dev/devstack -b stable/mitaka
 
     2. cd devstack
 
