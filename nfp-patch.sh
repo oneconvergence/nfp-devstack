@@ -4,7 +4,7 @@ rm -rf local.*
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/local.conf
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/lib/nfp -P lib/
 sed -i 's/source $TOP_DIR\/lib\/dstat/source $TOP_DIR\/lib\/dstat\nsource $TOP_DIR\/lib\/nfp/g' stack.sh
-sed -i "s/install_gbpservice/install_gbpservice\nconfigure_nfp_firewall/g" stack.sh
+sed -i "s/install_gbpservice/install_gbpservice\nconfigure_nfp_firewall\nconfigure_nfp_loadbalancer/g" stack.sh
 sed -i "s/install_apic_ml2/#install_apic_ml2/g" stack.sh
 sed -i "s/install_aim/#install_aim/g" stack.sh
 sed -i "s/init_aim/#init_aim/g" stack.sh
