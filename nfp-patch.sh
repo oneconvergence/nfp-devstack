@@ -10,7 +10,7 @@ wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/exerci
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/exercises/templates/fw_template.yml -P exercises/nfp/templates/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/exercises/templates/haproxy.template -P exercises/nfp/templates/
 sed -i 's/source $TOP_DIR\/lib\/dstat/source $TOP_DIR\/lib\/dstat\nsource $TOP_DIR\/lib\/nfp/g' stack.sh
-sed -i "s/install_gbpservice/install_gbpservice\nconfigure_nfp_firewall/g" stack.sh
+sed -i "s/install_gbpservice/install_gbpservice\nconfigure_nfp_firewall\nconfigure_nfp_loadbalancer/g" stack.sh
 sed -i "s/install_apic_ml2/#install_apic_ml2/g" stack.sh
 sed -i "s/install_aim/#install_aim/g" stack.sh
 sed -i "s/init_aim/#init_aim/g" stack.sh

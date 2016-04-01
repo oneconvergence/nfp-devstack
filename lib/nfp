@@ -152,6 +152,11 @@ function configure_nfp_firewall {
     sudo sed -i "s/neutron_fwaas.services.firewall.fwaas_plugin.FirewallPlugin/gbpservice.nfp.service_plugins.firewall.nfp_fwaas_plugin.NFPFirewallPlugin/g" /etc/neutron/neutron.conf
 }
 
+function configure_nfp_loadbalancer {
+    echo "Configuring NFP Loadbalancer plugin driver"
+    sudo sed -i "s/service_provider\ *=\ *LOADBALANCER:Haproxy:neutron_lbaas.services.loadbalancer.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default/service_provider\ =\ LOADBALANCER:Haproxy:neutron_lbaas.services.loadbalancer.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver\nservice_provider\ =\ LOADBALANCER:loadbalancer:gbpservice.nfp.service_plugins.loadbalancer.drivers.nfp_lbaas_plugin_driver.HaproxyOnVMPluginDriver:default/g" /etc/neutron/neutron_lbaas.conf
+}
+
 function configure_nfp_basic.sh {
     assign_user_role_credential $1
     create_ext_net $1
