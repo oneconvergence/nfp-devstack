@@ -148,16 +148,15 @@ function copy_nfp_files_and_start_process {
 }
 
 function configure_nfp_firewall {
-    sudo cp -r /opt/stack/gbp/gbpservice/nfp/Automation-Scripts/oc_noop_firewall_driver /opt/stack/neutron-fwaas/neutron_fwaas/services/firewall/drivers/linux/.
-    echo "Firewall Agent topic changed from :L3_AGENT_TOPIC to oc-firewall-agent Topic"
-    sudo sed -i "s/topics.L3_AGENT/'oc-firewall-agent'/g" /opt/stack/neutron-fwaas/neutron_fwaas/services/firewall/fwaas_plugin.py
-
+    echo "Configuring NFP Firewall plugin"
+    sudo sed -i "s/neutron_fwaas.services.firewall.fwaas_plugin.FirewallPlugin/gbpservice.nfp.service_plugins.firewall.nfp_fwaas_plugin.NFPFirewallPlugin/g" /etc/neutron/neutron.conf
 }
+
 function configure_nfp_basic.sh {
     assign_user_role_credential $1
     create_ext_net $1
-                        
 }
+
 function nfp_setup {
     configure_nfp_basic.sh $1 
     create_nfp_gbp_resources $1
