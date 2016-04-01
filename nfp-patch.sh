@@ -14,7 +14,7 @@ sed -i "s/install_gbpservice/install_gbpservice\nconfigure_nfp_firewall\nconfigu
 sed -i "s/install_apic_ml2/#install_apic_ml2/g" stack.sh
 sed -i "s/install_aim/#install_aim/g" stack.sh
 sed -i "s/init_aim/#init_aim/g" stack.sh
-sed -i 's/# Restore\/close logging file descriptors/nfp_setup $TOP_DIR $ConfiguratorQcow2Image $VyosQcow2Image\n# Restore\/close logging file descriptors/g' stack.sh
+sed -i 's/# Restore\/close logging file descriptors/nfp_setup $TOP_DIR $ConfiguratorQcow2Image $VyosQcow2Image $HaproxyQcow2Image\n# Restore\/close logging file descriptors/g' stack.sh
 
 sed -i "s/export OS_USER_DOMAIN_ID=default/#export OS_USER_DOMAIN_ID=default/g"  stack.sh
 sed -i "s/export OS_PROJECT_DOMAIN_ID=default/#export OS_PROJECT_DOMAIN_ID=default/g"  stack.sh

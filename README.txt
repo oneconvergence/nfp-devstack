@@ -25,6 +25,7 @@ Install stable/mitaka devstack with GBP.
 
        ConfiguratorQcow2Image=<configurator image path>
        VyosQcow2Image=<vyos image path>
+       HaproxyQcow2Image=<haproxy image path>
        EXT_NET_NAME=ext-net
        EXT_NET_SUBNET_NAME=ext-net-subnet
        EXT_NET_GATEWAY=192.168.102.254
