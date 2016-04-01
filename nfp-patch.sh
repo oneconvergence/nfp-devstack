@@ -3,6 +3,13 @@ set -x
 rm -rf local.*
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/local.conf
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/lib/nfp -P lib/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw.sh -P exercises/nfp/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_clean.sh -P exercises/nfp/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_lb.sh -P exercises/nfp/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_lb_clean.sh -P exercises/nfp/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/templates/fw_template.yml -P exercises/nfp/templates/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/templates/haproxy.template -P exercises/nfp/templates/
+
 sed -i 's/source $TOP_DIR\/lib\/dstat/source $TOP_DIR\/lib\/dstat\nsource $TOP_DIR\/lib\/nfp/g' stack.sh
 sed -i "s/install_gbpservice/install_gbpservice\nconfigure_nfp_firewall/g" stack.sh
 sed -i "s/install_apic_ml2/#install_apic_ml2/g" stack.sh
