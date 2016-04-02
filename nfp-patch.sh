@@ -5,6 +5,8 @@ wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mit
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/lib/nfp -P lib/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw.sh -P exercises/nfp/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_clean.sh -P exercises/nfp/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/lb.sh -P exercises/nfp/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/lb_clean.sh -P exercises/nfp/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_lb.sh -P exercises/nfp/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_lb_clean.sh -P exercises/nfp/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/templates/fw_template.yml -P exercises/nfp/templates/
