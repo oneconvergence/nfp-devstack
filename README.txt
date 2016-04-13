@@ -18,13 +18,6 @@ Install base mode stable/mitaka devstack with GBP.
 
     9. edit the local.conf
       
-       EXT_NET_NAME=ext-net
-       EXT_NET_SUBNET_NAME=ext-net-subnet
-       EXT_NET_GATEWAY=192.168.102.254
-       EXT_NET_ALLOCATION_POOL_START=192.168.102.81
-       EXT_NET_ALLOCATION_POOL_END=192.168.102.90
-       EXT_NET_CIDR=192.168.102.0
-       EXT_NET_MASK=24
        HOST_IP=
 
     10. ./stack.sh
