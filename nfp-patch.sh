@@ -9,6 +9,8 @@ wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mit
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/lb_clean.sh -P exercises/nfp/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_lb.sh -P exercises/nfp/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_lb_clean.sh -P exercises/nfp/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_ansible.sh -P exercises/nfp/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/fw_ansible_clean.sh -P exercises/nfp/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/templates/fw_template.yml -P exercises/nfp/templates/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/exercises/templates/haproxy.template -P exercises/nfp/templates/
 
