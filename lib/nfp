@@ -28,7 +28,8 @@ function namespace_delete {
 
 function namespace_create {
 
-    source $1/openrc neutron service
+    #doing it in namespace_delete, so no need to do it again
+    #source $1/openrc neutron service
     SERVICE_MGMT_NET="l2p_svc_management_ptg"
     cidr="/24"
     echo "Creating new namespace nfp-proxy...."
