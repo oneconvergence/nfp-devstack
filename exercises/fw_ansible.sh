@@ -3,7 +3,7 @@
 source /home/stack/devstack/openrc neutron service
 
 #service chain node and spec creation
-gbp servicechain-node-create  --service-profile base_mode_fw_with_vm --config 'ansible:{"mimetype": "config/custom+json","rules": [{"name": "tcp", "service": "tcp/80", "action": "log"}, {"name": "tcp", "service": "tcp/8080", "action": "log"}, {"name": "tcp", "service": "tcp/22", "action": "log"}, {"name": "icmp", "service": "icmp", "action": "log"}]}' FWNODE
+gbp servicechain-node-create  --service-profile base-mode-fw --config 'ansible:{"mimetype": "config/custom+json","rules": [{"name": "tcp", "service": "tcp/80", "action": "log"}, {"name": "tcp", "service": "tcp/8080", "action": "log"}, {"name": "tcp", "service": "tcp/22", "action": "log"}, {"name": "icmp", "service": "icmp", "action": "log"}]}' FWNODE
 gbp servicechain-spec-create --nodes "FWNODE" fw-chainspec
 
 # Redirect action, rule, classifier and rule-set
