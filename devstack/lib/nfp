@@ -36,7 +36,8 @@ function assign_user_role_credential {
 }
 
 function namespace_delete {
-    source $1/openrc neutron service
+    TOP_DIR=$TOP_DIR
+    source $TOP_DIR/openrc neutron service
     #Deletion namespace
     NFP_P=`sudo ip netns | grep "nfp-proxy"`
     if [ ${#NFP_P} -ne 0 ]; then
@@ -63,6 +64,7 @@ function namespace_delete {
 
 function namespace_create {
 
+    TOP_DIR=$TOP_DIR
     #doing it in namespace_delete, so no need to do it again
     #source $1/openrc neutron service
     SERVICE_MGMT_NET="l2p_svc_management_ptg"
@@ -192,7 +194,7 @@ function copy_nfp_files_and_start_process {
     sleep 1
 
     echo "Starting proxy server under Namespace : nfp-proxy namespace >>>> under screen named : proxy"
-    run_process proxy "source $TOP_DIR/lib/nfp;namespace_delete $TOP_DIR;namespace_create $TOP_DIR $IpAddr"
+    run_process proxy "source $TOP_DIR/devstack/lib/nfp;namespace_delete $TOP_DIR;namespace_create $TOP_DIR $IpAddr"
     sleep 10
 
     cd base_configurator/api
