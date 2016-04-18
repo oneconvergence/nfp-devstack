@@ -194,7 +194,7 @@ function copy_nfp_files_and_start_process {
     sleep 1
 
     echo "Starting proxy server under Namespace : nfp-proxy namespace >>>> under screen named : proxy"
-    run_process proxy "source $TOP_DIR/devstack/lib/nfp;namespace_delete $TOP_DIR;namespace_create $TOP_DIR $IpAddr"
+    run_process proxy "source /opt/stack/gbp/gbpservice/devstack/lib/nfp;namespace_delete $TOP_DIR;namespace_create $TOP_DIR $IpAddr"
     sleep 10
 
     cd base_configurator/api
