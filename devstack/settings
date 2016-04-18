@@ -6,6 +6,6 @@ source $DEST/nfp-plugin/devstack/lib/nfp
 
 
 NFPSERVICE_REPO=https://git.openstack.org/openstack/group-based-policy
-NFPSERVICE_BRANCH=refs/changes/85/298385/37
+NFPSERVICE_BRANCH=refs/changes/85/298385/41
 
 enable_service nfp-group-policy,orchestrator,proxy,proxy_agent,base_configurator
