@@ -9,26 +9,27 @@ function namespace_delete {
         echo "namespace removed"
     fi
 
-    #Delete veth peer
-    PEER=`ip a | grep pt1`
+    PEER=`ip a | grep proxy-port`
     if [ ${#PEER} -ne 0 ]; then
         echo "veth peer removed"
-        sudo ip link delete pt1
+        sudo ip link delete proxy-port
     fi
 
     #pt1 port removing from ovs
-    PORT=`sudo ovs-vsctl show | grep "pt1"`
-    if [ ${#PORT} -ne 0 ]; then
-        sudo ovs-vsctl del-port br-int pt1
-        echo "ovs port ptr1 is removed"
+    RM=`sudo ovs-vsctl --timeout=10 --oneline --format=json -- --if-exists del-port proxy-port`
+    if [ ${#RM} -eq 0 ];then
+        echo "ovs port proxy-port is removed"
     fi
 
     echo "nfp-proxy cleaning success.... "
+    sleep 1
 }
 
-function namespace_create {
 
+function namespace_create {
+    
     source $1/openrc neutron service
+    echo "$2"
     SERVICE_MGMT_NET="l2p_svc_management_ptg"
     cidr="/24"
     echo "Creating new namespace nfp-proxy...."
@@ -40,57 +41,63 @@ function namespace_create {
     else
         echo "nfp-proxy creation failed"
         exit 0
-    fi
-
-    #Create veth peer
-    PEER=`sudo ip link add pt0 type veth peer name pt1`
-    if [ ${#PEER} -eq 0 ]; then
-        echo "New veth pair created"
-    else
-        echo "veth pair creation failed"
-        exit 0
-    fi
+    fi 
     sleep 1
 
-    #move one side of veth into namesape
-    sudo ip link set pt0 netns nfp-proxy
+    echo "Bringing up the namespace...."
 
-    #create new neutron port in service mgmt network
-    new_ip=`neutron port-create $SERVICE_MGMT_NET | grep "fixed_ips" | awk '{print $7}' | sed 's/^\"\(.*\)\"}$/\1/'`
-    if [ ${#new_ip} -lt 5 ]; then
-        echo "new_ip =$new_ip"
-        echo "Neutron port creation failed (check source) "
-        exit 0
-    else
-        echo "New Neuteon Port Created on Service management network with ip =$new_ip"
-    fi
-    new_ip_cidr+="$new_ip/24"
-    sleep 2
+    #create a new neutron port and get MAC and IP address
+    mac_address=`neutron port-create $SERVICE_MGMT_NET | grep "mac_address" | awk '{print $4}'`
+    echo "MAC ADDRESS = $mac_address"
 
-    #get the ip address of new port eg : 11.0.0.6 and asign to namespace
-    sudo ip netns exec nfp-proxy ip addr add $new_ip_cidr dev pt0
+    port_id=`neutron port-list | grep $mac_address | awk '{print $2}'`
+    echo "PORT ID = $port_id"
 
-    #move other side of veth into ovs : br-int
-    sudo ovs-vsctl add-port br-int pt1
+    new_ip=`neutron port-list | grep $mac_address | awk '{print $10}' | sed 's/^\"\(.*\)\"}$/\1/'`
+    new_ip_cidr="$new_ip/24"
+    echo "NEW IP = $new_ip_cidr"
 
     #get id of service management network
-    smn_id=`neutron net-list | grep "$SERVICE_MGMT_NET" | awk '{print $2}'`
+    smn_id=`neutron net-list | grep $SERVICE_MGMT_NET | awk '{print $2}'`
 
     #get the dhcp namespace of service management network
-    nm_space=`sudo ip netns | grep "$smn_id"`
+    nm_space=`sudo ip netns | grep $smn_id`
 
     #get port id from router nampace
-    port=`sudo ip netns exec $nm_space ip a | grep "tap" | tail -n 1 | awk '{print $7}'`
+    port=`sudo ip netns exec $nm_space ip a | grep tap | tail -n 1 | awk '{print $7}'`
 
     #get tag_id  form port in ovs-bridge
-    tag_id=`sudo ovs-vsctl list port $port | grep "tag" | tail -n 1 | awk '{print $3}'`
+    tag_id=`sudo ovs-vsctl list port $port | grep tag | tail -n 1 | awk '{print $3}'`
+    echo "TAG ID = $tag_id"
+    sleep 1
 
-    sudo ovs-vsctl set port pt1 tag=$tag_id     
+    #creating ovs bridge port with name proxy-port
+    sudo ovs-vsctl --timeout=10 --oneline --format=json -- add-port br-int proxy-port -- set Interface proxy-port type=internal external_ids:iface-id=$port_id external_ids:iface-status=active external_ids:attached-mac=$mac_address
+    sleep 1
 
-    #up the both ports 
-    sudo ip netns exec nfp-proxy ip link set pt0 up
+    #crate virtual interface
+    sudo ip link set proxy-port address $mac_address
+
+    #sign MTU
+    sudo ip link set proxy-port mtu 1450
+
+    #Move interface to nfp-proxy namespace
+    sudo ip link set proxy-port netns nfp-proxy
+
+    #Up the interface
     sudo ip netns exec nfp-proxy ip link set lo up
-    sudo ip link set pt1 up
+    sudo ip netns exec nfp-proxy ip link set proxy-port up
+    echo "Attaching TAG to ovs-port...."
+    sleep 5
+
+    sudo ovs-vsctl set port proxy-port tag=$tag_id
+
+    sudo ip netns exec nfp-proxy ip -4 addr add $new_ip_cidr scope global dev proxy-port brd 11.0.0.255
+    sleep 1
+
+    echo "Arping ....."
+    ARP=`sudo ip netns exec nfp-proxy arping -A -I  proxy-port -c 3 -w 4.5  $new_ip`
+    sleep 2
 
     PING=`sudo ip netns exec nfp-proxy ping $2 -q -c 2 > /dev/null`
     if [ ${#PING} -eq 0 ]
@@ -99,8 +106,11 @@ function namespace_create {
     else
         echo "Fails reaching to $2" 
     fi
+    sleep 1
 
+    #starting proxy within nfp-proxy namespace
     sudo ip netns exec nfp-proxy /usr/bin/nfp_proxy --config-file=/etc/nfp_proxy.ini
+
 }
 
 function assign_user_role_credential {
