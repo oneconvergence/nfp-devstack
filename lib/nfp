@@ -104,7 +104,7 @@ function upload_images_and_launch_configuratorVM {
 
 }
 
-function nfp_visibility_logs {
+function nfp_logs_forword {
     VISIBILITY_CONF="/etc/rsyslog.d/visibility.conf"
     SYSLOG_CONFIG="/etc/rsyslog.conf"
     log_facility=local1
@@ -123,7 +123,7 @@ function nfp_visibility_logs {
     fi 
 
 }
-function remove_nfp_visibility_logs {
+function remove_nfp_logs_forword {
     VISIBILITY_CONF="/etc/rsyslog.d/visibility.conf"
     SYSLOG_CONFIG="/etc/rsyslog.conf"
 
@@ -207,6 +207,6 @@ function nfp_setup {
     configure_nfp_basic.sh $1 
     create_nfp_gbp_resources $1
     upload_images_and_launch_configuratorVM $1 $2 $3 $4
-    nfp_visibility_logs
+    nfp_logs_forword
     copy_nfp_files_and_start_process $1
 }
