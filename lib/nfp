@@ -113,11 +113,11 @@ function nfp_visibility_logs {
     sudo sed -i '/#$UDPServerRun 514/ s/^#//' $SYSLOG_CONFIG
     echo "Successfully enabled UDP in syslog"
 
-    visibility_vm_ip_addres=$IpAddr
-    echo "$log_facility.*                @$visibility_vm_ip_address:514" | tee -a $VISIBILITY_CONF
+    visibility_vm_ip_address=$IpAddr
+    echo "$log_facility.*                @$visibility_vm_ip_address:514" | sudo tee -a $VISIBILITY_CONF
     echo "Created $VISIBILITY_CONF file" 
 
-    service rsyslog restart
+    sudo service rsyslog restart
     if [ $? -ne 0 ]; then
         echo "ERROR: Failed to restart rsyslog"
     fi 
@@ -134,7 +134,7 @@ function remove_nfp_visibility_logs {
     sudo rm -f $VISIBILITY_CONF
     echo "Deleted $VISIBILITY_CONF file" 
 
-    service rsyslog restart
+    sudo service rsyslog restart
     if [ $? -ne 0 ]; then
        echo "ERROR: Failed to restart rsyslog"
     fi 
