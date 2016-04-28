@@ -10,5 +10,5 @@ Install base mode stable/mitaka devstack with GBP.
 
        HOST_IP= <devstack host ip>
 
-
     5. ./stack.sh
+
