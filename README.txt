@@ -4,7 +4,7 @@ Install base mode stable/mitaka devstack with GBP.
 
     2. cd devstack
 
-    3. rm -rf local.conf && wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-nfp-plugin-merge/local.conf
+    3. rm -rf local.conf && wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/local.conf
 
     4. edit the local.conf
 
