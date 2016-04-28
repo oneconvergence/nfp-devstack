@@ -4,24 +4,11 @@ Install base mode stable/mitaka devstack with GBP.
 
     2. cd devstack
 
-    3. wget https://raw.githubusercontent.com/group-policy/gbp-devstack/master/gbp-patch.sh
+    3. rm -rf local.conf && wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-nfp-plugin-merge/local.conf
 
-    4. chmod +x gbp-patch.sh
+    4. edit the local.conf
 
-    5. ./gbp-patch.sh
-  
-    6. wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/base-mode-mitaka/nfp-patch.sh
+       HOST_IP= <devstack host ip>
 
-    7. chmod +x nfp-patch.sh
-
-    8. ./nfp-patch.sh 
-
-    9. edit the local.conf
-     
-       # Public IP
-       HOST_IP=
-       # update to the latest patch
-       GBPSERVICE_BRANCH=
-
-    10. ./stack.sh
+    5. ./stack.sh
 
