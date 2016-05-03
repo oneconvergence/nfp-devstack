@@ -207,6 +207,42 @@ function upload_images_and_launch_configuratorVM {
 
 }
 
+function nfp_logs_forword {
+    VISIBILITY_CONF="/etc/rsyslog.d/visibility.conf"
+    SYSLOG_CONFIG="/etc/rsyslog.conf"
+    log_facility=local1
+
+    sudo sed -i '/#$ModLoad imudp/ s/^#//' $SYSLOG_CONFIG
+    sudo sed -i '/#$UDPServerRun 514/ s/^#//' $SYSLOG_CONFIG
+    echo "Successfully enabled UDP in syslog"
+
+    visibility_vm_ip_address=$IpAddr
+    echo "$log_facility.*                @$visibility_vm_ip_address:514" | sudo tee -a $VISIBILITY_CONF
+    echo "Created $VISIBILITY_CONF file" 
+
+    sudo service rsyslog restart
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to restart rsyslog"
+    fi 
+
+}
+function remove_nfp_logs_forword {
+    VISIBILITY_CONF="/etc/rsyslog.d/visibility.conf"
+    SYSLOG_CONFIG="/etc/rsyslog.conf"
+
+    sudo sed -i '/$ModLoad imudp/ s//#$ModLoad imudp/' $SYSLOG_CONFIG
+    sudo sed -i '/$UDPServerRun 514/ s//#$UDPServerRun 514/' $SYSLOG_CONFIG
+    sudo echo "Successfully disabled UDP in syslog"
+
+    sudo rm -f $VISIBILITY_CONF
+    echo "Deleted $VISIBILITY_CONF file" 
+
+    sudo service rsyslog restart
+    if [ $? -ne 0 ]; then
+       echo "ERROR: Failed to restart rsyslog"
+    fi 
+
+}
 function copy_nfp_files_and_start_process {
 
     TOP_DIR=$1
@@ -274,5 +310,6 @@ function nfp_setup {
     configure_nfp_basic.sh $1 
     create_nfp_gbp_resources $1
     upload_images_and_launch_configuratorVM $1 $2 $3 $4
+    nfp_logs_forword
     copy_nfp_files_and_start_process $1
 }

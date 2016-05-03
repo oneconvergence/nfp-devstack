@@ -24,3 +24,4 @@ sed -i "s/export OS_PROJECT_DOMAIN_ID=default/#export OS_PROJECT_DOMAIN_ID=defau
 
 
 
+sed -i 's/source $TOP_DIR\/lib\/dlm/source $TOP_DIR\/lib\/dlm\nsource $TOP_DIR\/lib\/nfp\nremove_nfp_logs_forword/g' unstack.sh
