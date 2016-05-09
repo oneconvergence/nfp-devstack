@@ -16,7 +16,7 @@ wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/exerci
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/exercises/templates/haproxy.template -P exercises/nfp/templates/
 sed -i 's/source $TOP_DIR\/lib\/dstat/source $TOP_DIR\/lib\/dstat\nsource $TOP_DIR\/lib\/nfp/g' stack.sh
 sed -i "s/install_gbpservice/install_gbpservice\nconfigure_nfp_loadbalancer/g" stack.sh
-sed -i "s/save_stackenv/save_stackenv\nconfigure_nfp_vpn/g" stack.sh
+sed -i "s/time_totals/time_totals\nconfigure_nfp_vpn/g" stack.sh
 sed -i "s/start_neutron_service_and_check/configure_nfp_firewall\n    start_neutron_service_and_check/g" stack.sh
 sed -i "s/install_apic_ml2/#install_apic_ml2/g" stack.sh
 sed -i "s/install_aim/#install_aim/g" stack.sh
