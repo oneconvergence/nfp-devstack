@@ -17,7 +17,7 @@ wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/exerci
 sed -i 's/source $TOP_DIR\/lib\/dstat/source $TOP_DIR\/lib\/dstat\nsource $TOP_DIR\/lib\/nfp/g' stack.sh
 sed -i "s/install_gbpservice/install_gbpservice\nconfigure_nfp_loadbalancer/g" stack.sh
 sed -i "s/start_neutron_service_and_check/configure_nfp_firewall\n    start_neutron_service_and_check/g" stack.sh
-sed -i "s/configure_nfp_firewal/configure_nfp_firewal\nconfigure_nfp_vpn/g" stack.sh
+sed -i "s/configure_nfp_firewall/configure_nfp_firewall\n    configure_nfp_vpn/g" stack.sh
 sed -i "s/install_apic_ml2/#install_apic_ml2/g" stack.sh
 sed -i "s/install_aim/#install_aim/g" stack.sh
 sed -i "s/init_aim/#init_aim/g" stack.sh
