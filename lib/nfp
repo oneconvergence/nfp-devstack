@@ -135,12 +135,6 @@ function create_ext_net {
 function create_nfp_gbp_resources {
    
    TOP_DIR=$1
-   EXT_NET_SUBNET_NAME=$EXT_NET_SUBNET_NAME
-   EXT_NET_CIDR=$EXT_NET_CIDR
-   EXT_NET_MASK=$EXT_NET_MASK
-   EXT_NET_GATEWAY=$EXT_NET_GATEWAY
-   EXT_NET_SUBNET_ID=`neutron subnet-list | grep $EXT_NET_SUBNET_NAME | awk '{print $2}'`
-
    source $TOP_DIR/openrc neutron service
    gbp network-service-policy-create --network-service-params type=ip_pool,name=vip_ip,value=nat_pool svc_mgmt_fip_policy
 
@@ -192,6 +186,10 @@ function upload_images_and_launch_configuratorVM {
 
     nova boot --flavor m1.medium --image $ImageId --nic port-id=$PortId $InstanceName
     sleep 10
+
+    l2p_id=`gbp ptg-show svc_management_ptg | grep l2_policy_id | awk '{print $4}'`
+    l3p_id=`gbp l2p-show $l2p_id | grep l3_policy_id | awk '{print $4}'`
+    RouterId=`gbp l3p-show $l3p_id | grep routers | awk '{print $4}'`
 
     echo "Collecting RouterId : for $RouterName"
     if [ ! -z "$RouterId" -a "$RouterId" != " " ]; then
