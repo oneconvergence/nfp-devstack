@@ -149,10 +149,6 @@ function create_nfp_gbp_resources {
 
    gbp service-profile-create --servicetype VPN --insertion-mode l3 --shared True --service-flavor service_vendor=vyos,device_type=nova --vendor NFP vpn_profile
 
-   gbp external-segment-create --ip-version 4 --external-route destination=0.0.0.0/0,nexthop=$EXT_NET_GATEWAY --shared True --subnet_id=$EXT_NET_SUBNET_ID --cidr $EXT_NET_CIDR/$EXT_NET_MASK default
-
-   gbp nat-pool-create --ip-pool $EXT_NET_CIDR/$EXT_NET_MASK --external-segment default --shared True default_nat_pool
-
    gbp group-create svc_management_ptg --service_management True
 
 }
@@ -196,12 +192,6 @@ function upload_images_and_launch_configuratorVM {
 
     nova boot --flavor m1.medium --image $ImageId --nic port-id=$PortId $InstanceName
     sleep 10
-
-    l2p_id=`gbp ptg-show svc_management_ptg | grep l2_policy_id | awk '{print $4}'`
-    l3p_id=`gbp l2p-show $l2p_id | grep l3_policy_id | awk '{print $4}'`
-    RouterId=`gbp l3p-show $l3p_id | grep routers | awk '{print $4}'`
-    l3p_name=`gbp l3p-list | awk '{print $4}' | awk 'NR==4'`
-    gbp  l3p-update $l3p_name --external-segment default
 
     echo "Collecting RouterId : for $RouterName"
     if [ ! -z "$RouterId" -a "$RouterId" != " " ]; then
