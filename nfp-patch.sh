@@ -2,7 +2,7 @@
 set -x
 rm -rf local.*
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/local.conf
-wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master-vpn/lib/nfp -P lib/
+wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/lib/nfp -P lib/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/exercises/fw.sh -P exercises/nfp/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/exercises/fw_clean.sh -P exercises/nfp/
 wget https://raw.githubusercontent.com/oneconvergence/nfp-devstack/master/exercises/lb.sh -P exercises/nfp/
