@@ -108,8 +108,8 @@ function assign_user_role_credential {
     source $TOP_DIR/openrc admin admin
     #set -x
     serviceTenantID=`keystone tenant-list | grep "service" | awk '{print $2}'`
-    serviceRoleID=`keystone role-list | grep "service" | awk '{print $2}'`
-    adminRoleID=`keystone role-list | grep "admin" | awk '{print $2}'`
+    serviceRoleID=`keystone role-list | grep -w '[^.]service[^.]' | awk '{print $2}'`
+    adminRoleID=`keystone role-list | grep -w '[^.]admin[^.]' | awk '{print $2}'`
     keystone user-role-add --user nova --tenant $serviceTenantID --role $serviceRoleID
     keystone user-role-add --user neutron --tenant $serviceTenantID --role $adminRoleID
 }
