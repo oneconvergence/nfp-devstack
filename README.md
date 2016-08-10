@@ -20,28 +20,37 @@ Install stable/liberty devstack with GBP.
 8. ./nfp-patch.sh 
 
 9. edit local.conf for NFP
+
     * Base Mode Configuration:
-        # Zero Configuration
+        * Zero Configuration
 
     * Advanced Mode Configuration:
-        # Devstack installation in enterprise mode
-              NFP_DEVSTACK_MODE=advanced
-        # External network details
+        * Devstack installation mode advanced/base
+              NFP_DEVSTACK_MODE=base
+
+        * External network details
+
               EXT_NET_GATEWAY=
               EXT_NET_ALLOCATION_POOL_START=
               EXT_NET_ALLOCATION_POOL_END=
               EXT_NET_CIDR=
-        # Configurator VM image path, its optional
-        # If configured, install step uploads the specified image
-        # If not configured, install step will build a new one and upload it
+
+        * Configurator VM image path, its optional
+        * If configured, install step uploads the specified image
+        * If not configured, install step will build a new one and upload it
+
               ConfiguratorQcow2Image=
-        # Service VM image paths, they are optional
-        # One can build service images referring to the section "Build service images".
-        # If configured, install step uploads the specified images
-        # If not configured, install step ignores uploading these service images.
+
+        * Service VM image paths, they are optional
+        * One can build service images referring to the section "Build service images".
+        * If configured, install step uploads the specified images
+        * If not configured, install step ignores uploading these service images.
+
               VyosQcow2Image=
               HaproxyQcow2Image=
-        # Public interface name
+
+        * Public interface name
+
               PUBLIC_INTERFACE=
 
 6. ./stack.sh
